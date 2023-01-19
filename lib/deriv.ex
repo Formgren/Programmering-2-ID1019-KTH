@@ -6,9 +6,9 @@ defmodule Deriv do
   |   {:add, expr(), expr()}
   |   {:mul, expr(), expr()}
   |   {:exp, expr(), literal()}
-  |   {:log, literal()}
-  |   {:sin, literal()}
-  |   {:cos, literal()}
+  |   {:log, expr()}
+  |   {:sin, expr()}
+  |   {:cos, expr()}
 
   def test() do
     e = {:add,
@@ -69,21 +69,21 @@ defmodule Deriv do
       {:mul, {:num, n}, {:exp, e, {:num, n-1}}},
       deriv(e, v)}
   end
-  def deriv({:log, {:var, x}},x) do
-    {:exp, {:var, x}, {:num, -1}}
-  end
   def deriv({:log, {:num, _}}, _) do
     {:num, 0}
   end
 
-  def deriv({:sin, {:var, x}}, x) do
-    {:cos, {:var, x}}
-  end
-  def deriv({:cos, {:var, x}}, x) do
-    {:mul, {:num, -1}, {:sin, {:var, x}}}
+  def deriv({:log, e}, v) do
+    {:mul, deriv(e, v), {:exp, e, {:num, -1}}}
   end
 
+  def deriv({:sin, {:num, _}}, _) do {:num, 0} end
+  def deriv({:sin, e}, v) do {:mul, {:cos, e}, deriv(e, v)} end
 
+  def deriv({:cos, {:num, _}}, _) do {:num, 0} end
+  def deriv({:cos, e}, v) do
+    {:mul, {:mul, {:num, -1}, {:sin, e}}, deriv(e, v)}
+  end
   def simplify({:add, e1, e2}) do
     simplify_add(simplify(e1), simplify(e2))
   end
