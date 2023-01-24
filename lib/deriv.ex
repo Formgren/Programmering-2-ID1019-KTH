@@ -13,7 +13,7 @@ defmodule Deriv do
   def test() do
     e = {:add,
     {:mul, {:num, 2}, {:var, :x}},
-    {:num, 4}}
+    {:log, {:mul, {:num, 3}, {:var, :x}}}}
     d = deriv(e, :x)
     pprint(d)
     IO.write("Expression: #{(pprint(e))}\n")
@@ -72,7 +72,6 @@ defmodule Deriv do
   def deriv({:log, {:num, _}}, _) do
     {:num, 0}
   end
-
   def deriv({:log, e}, v) do
     {:mul, deriv(e, v), {:exp, e, {:num, -1}}}
   end
