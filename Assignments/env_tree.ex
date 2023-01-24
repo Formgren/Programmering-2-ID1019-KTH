@@ -10,10 +10,12 @@ defmodule EnvTree do
   def add({:node, k, v, left, right}, key, value) do
     {:node, k, v, left, add(right, key, value)} end
 
-  def member(:nil, _key) do :error end
-  def member({:node, key, value, _left, _right }, key) do {key,value} end
-  def member({:node, k, _v, left, _right}, key) when key < k do member(left, key) end
-  def member({:node, _k, _v, _left, right}, key) do member(right, key) end
+  def lookup(:nil, _key) do :error end
+  def lookup({:node, key, value, _left, _right }, key) do {:value,value} end
+  def lookup({:node, k, _v, left, _right}, key) when key < k do lookup(left, key) end
+  def lookup({:node, _k, _v, _left, right}, key) do lookup(right, key) end
+
+  def remove({:nil, _key}) do nil end
 
 
 end
