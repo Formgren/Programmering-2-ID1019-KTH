@@ -3,7 +3,7 @@ defmodule EnvList do
   def new() do
     []
   end
-  
+
   def add([], key, value) do  [{key,value}] end #If the list is empty add the key value pair
   def add([{key,_value}|map], key, value) do [{key,value}|map] end #  match the head of the list to a key value tuple
   def add([item|map], key, value) do [item|add(map,key,value)] end

@@ -10,10 +10,28 @@ defmodule EnvTree do
   def add({:node, k, v, left, right}, key, value) do
     {:node, k, v, left, add(right, key, value)} end
 
-  def member(:nil, _key) do :error end
-  def member({:node, key, value, _left, _right }, key) do {key,value} end
-  def member({:node, k, _v, left, _right}, key) when key < k do member(left, key) end
-  def member({:node, _k, _v, _left, right}, key) do member(right, key) end
+  def lookup(:nil, _key) do :error end
+  def lookup({:node, key, value, _left, _right }, key) do {:value,value} end
+  def lookup({:node, k, _v, left, _right}, key) when key < k do lookup(left, key) end
+  def lookup({:node, _k, _v, _left, right}, key) do lookup(right, key) end
 
+  def remove({:nil, _key}) do nil end
+  def remove({:node, key, _value, nil, right}, key) do right end
+  def remove({:node, key, _value, left, nil}, key) do left end
+  def remove({:node, key, _, left, right}, key) do
+    {key, value, rest} = leftmost(right)
+    {:node, key, value, left, rest}
+  end
+  def remove({:node, k, v, left, right}, key) when key < k do
+    {:node, k, v, remove(left, key), right}
+  end
+  def remove({:node, k, v, left, right}, key) do
+    {:node, k, v, left, remove(right, key)}
+  end
 
+  def leftmost({:node, key, value, nil, rest}) do {key,value, rest} end
+  def leftmost({:node, k, v, left, right}) do
+    {key, value, rest} = leftmost(left)
+    {key, value, {:node, k, v, rest, right}}
+  end
 end
