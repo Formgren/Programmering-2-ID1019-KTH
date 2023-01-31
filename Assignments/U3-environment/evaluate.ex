@@ -3,7 +3,7 @@ defmodule Evaluate do
 
     @type literal() :: {:num, number()}
     | {:var, atom()}
-    | {:q, number(), number()}
+    | {:q, integer(), integer()}
     @type expr() :: literal()
     | {:add, expr(), expr()}
     | {:mul, expr(), expr()}
@@ -41,6 +41,14 @@ defmodule Evaluate do
     def pprint({:mul, e1, e2}) do "#{pprint(e1)} * #{pprint(e2)}" end
 
 
+
+    defmodule Environment do
+      def new() do
+        Map.new()
+      end
+
+    end
+
     # variablerna får ett värde i miljön
     # map biblioteket får användas -  Map.add(:x, 6) etc
 
@@ -48,9 +56,4 @@ defmodule Evaluate do
     # P för pattern matching
     # Real world serverless sML systems buiild at kth
     # lambda kalkylen
-    #
-    #
-    #
-    #
-    #
 end
