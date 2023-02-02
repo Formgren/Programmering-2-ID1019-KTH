@@ -106,7 +106,6 @@ defmodule Deriv do
   def simplify_add(e1, {:num, 0}) do e1 end
   def simplify_add({:num, n1}, {:num, n2}) do {:num, n1+n2} end
 
-
   def simplify_add(e1, e2) do {:add, e1, e2} end
 
   def simplify_mul({:mul, {:var, v}, {:exp, {:var, v}, {:num, n}}}) do
