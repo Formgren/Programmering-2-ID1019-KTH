@@ -7,5 +7,3 @@ defmodule Hanoi do
 
   def solve(_, _, _, _), do: nil
 end
-
-# Hanoi.solve(5, :left, :right, :center)
