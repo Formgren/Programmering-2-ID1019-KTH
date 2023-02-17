@@ -1,8 +1,4 @@
 defmodule Day1 do
-  def calories do
-
-  end
-
 
   def task1 do
     File.read!("calories.csv")
