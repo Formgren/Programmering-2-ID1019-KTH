@@ -3,7 +3,7 @@ defmodule Day1 do
   def task1 do
     File.read!("calories.csv")
     |> String.split("\n\n")
-    |> Enum.map(& String.split(&1, "\n"))
+    |> Enum.map(&String.split(&1, "\n"))
     |> Enum.map(fn inputs ->
       inputs
       |> Enum.map(&String.to_integer/1)
