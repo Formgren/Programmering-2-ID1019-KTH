@@ -1,25 +1,34 @@
 defmodule Huffman2 do
+
   defmodule Node do
     defstruct [:left,:right]
   end
+
   defmodule Leaf do
     defstruct [:value]
   end
+
+  # def test(text \\ "cheeeeeeeesssseeeecaaake") do
+  #   text = read("kallocain.txt")
+  #   encode = encode(text)
+  #   {tree, encoded} = encode
+  #   decoded = decode(tree,encoded)
+  # end
+
   def encode(text \\ "cheesecake") do
     frequencies =
       text
       |> String.graphemes()
-      |> Enum.reduce(%{}, fn char, map ->
-        Map.update(map, char, 1, fn val -> val + 1 end)
+      |> Enum.reduce(%{}, fn key, map ->
+        Map.update(map, key, 1, fn val -> val + 1 end)
       end)
       queue =
         frequencies
       |> Enum.sort_by(fn {_char, frequency} -> frequency end)
       |> Enum.map(fn {value, frequency} -> {%Leaf{value: value}, frequency} end)
-        tree = build(queue)
-        {tree, convert(text, tree)}
+      tree = build(queue)
+      {tree, convert(text, tree)}
 
-      #tree = build(node_tree)
   end
 
   defp build([{root, _freq}]) do root end # Exit condition
@@ -63,19 +72,65 @@ defmodule Huffman2 do
   defp walk(<<1::size(1), rest::bitstring>>, %Node{right: right}) do walk(rest,right) end
 
   def decode(tree, data, result \\ [])
-  def decode(_tree, <<>>, result) do result end
+  def decode(_tree, <<>>, result) do List.to_string(result) end
   def decode(tree, data, result) do
     {rest, value} = walk(data, tree)
     decode(tree,rest,result ++ [value])
   end
 
-  def read(file) do
-    {:ok, file} = File.open(file, [:read, :utf8])
-    binary = IO.read(file, :all)
-    File.close(file)
-    case :unicode.characters_to_binary(binary, :utf8) do
-    {:incomplete, list, _} -> list
-    list -> list
-    end
+  def bench(file,n) do
+    text = read(file)
+    length_kallocain = String.length(read("kallocain.txt"))
+    c = String.length(text)
+    # c = length(text)
+    {{tree,encoded}, t2} = time(fn -> encode(text) end)
+
+
+    {string, t3} = time(fn -> decode(tree,encoded) end)
+
+    IO.puts("length of kallocain #{length_kallocain} characters")
+    IO.puts("text of #{c} characters")
+     IO.puts("text encoded in #{t2} ms")
+     IO.puts("text decoded in #{t3} ms")
+    # IO.puts("encoded in #{t5} ms")
+    # IO.puts("decoded in #{t6} ms")
+    # IO.puts("source #{b} bytes, encoded #{e} bytes, compression #{r}")
   end
+
+  def time(func) do
+    initial = Time.utc_now()
+    result = func.()
+    final = Time.utc_now()
+    {result, Time.diff(final, initial, :microsecond) / 1000}
+  end
+  
+ # Get a suitable chunk of text to encode.
+  # def read(file, n) do
+  #  {:ok, fd} = File.open(file, [:read, :utf8])
+  #   binary = IO.read(fd, n)
+  #   File.close(fd)
+
+  #   length = byte_size(binary)
+  #   case :unicode.characters_to_list(binary, :utf8) do
+  #     {:incomplete, chars, rest} ->
+  #       {chars, length - byte_size(rest)}
+  #     chars ->
+  #       {chars, length}
+  #   end
+  # end
+  def read(file) do
+    binary = File.read!(file)
+    # :unicode.characters_to_list(binary, :utf8)
+  end
+
+
+  # def read(file) do
+  #   {:ok, file} = File.open(file, [:read, :utf8])
+  #   binary = IO.read(file, :all)
+  #   File.close(file)
+  #   case :unicode.characters_to_binary(binary, :utf8) do
+  #   {:incomplete, list, _} -> list
+  #   list -> list
+  #   end
+  # end
 end
