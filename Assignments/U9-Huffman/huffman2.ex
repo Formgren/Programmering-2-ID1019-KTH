@@ -90,8 +90,8 @@ defmodule Huffman2 do
 
     IO.puts("length of kallocain #{length_kallocain} characters")
     IO.puts("text of #{c} characters")
-     IO.puts("text encoded in #{t2} ms")
-     IO.puts("text decoded in #{t3} ms")
+    IO.puts("text encoded in #{t2} ms")
+    IO.puts("text decoded in #{t3} ms")
     # IO.puts("encoded in #{t5} ms")
     # IO.puts("decoded in #{t6} ms")
     # IO.puts("source #{b} bytes, encoded #{e} bytes, compression #{r}")
@@ -100,10 +100,10 @@ defmodule Huffman2 do
   def time(func) do
     initial = Time.utc_now()
     result = func.()
-    final = Time.utc_now()
+    final = Time.utc_now()2
     {result, Time.diff(final, initial, :microsecond) / 1000}
   end
-  
+
  # Get a suitable chunk of text to encode.
   # def read(file, n) do
   #  {:ok, fd} = File.open(file, [:read, :utf8])
