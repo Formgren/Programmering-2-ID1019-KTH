@@ -1,4 +1,4 @@
-defmodule Morse do
+defmodule OldMorse do
   @type nodes() :: {:nodes, char(), nodes(), nodes()} | :nil
   def morse() do
 
@@ -66,47 +66,32 @@ defmodule Morse do
      translator('bjorn', convert(), [])
     end
 
-    def translator([], _encode_table, acc) do Enum.reverse(acc) end
+    def translator([], _encode_table, acc) do acc end
     def translator([char|rest], encode_table, acc) do
       code = encode_table[char]
-      translator(rest, encode_table, [translate_char(code)|acc])
+      acc = acc ++ translate_char(code)
+      translator(rest, encode_table, acc)
     end
 
     def translate_char([1|rest]) do [45] ++ translate_char(rest) end
     def translate_char([0|rest]) do [46] ++ translate_char(rest) end
-    def translate_char([]) do [] end
+    def translate_char([]) do [32] end
 
-    def do_decodes([],_) do [] end
-    def do_decodes([head|tail], tree) do
-      [decode(head, tree)|do_decodes(tail, tree)]
+
+    def do_decode([], _) do [] end
+    def do_decode(msg, tree) do
+      {char,rest} = decode(msg,tree)
+      ([char | do_decode(rest,tree)])
     end
 
-    def decode([first|rest], {:nodes, val, left, right}) do
-      case first do
-      45 -> decode(rest, left)
-      46 -> decode(rest, right)
+    def decode([], _) do {46,[]} end
+    def decode([h|encoded], {:nodes, char, left, right}) do
+      case h do
+        ?- ->   decode(encoded, left)
+        ?. ->   decode(encoded, right)
+        32 ->   {char, encoded}
       end
     end
-    def decode([], {:nodes,val,_,_}) do val end
-
-    # def do_decode([], _) do [] end
-    # def do_decode(msg, tree) do
-    #   {char,rest} = decode(msg,tree)
-    #   #List.to_string([char | do_decode(rest,tree)])
-    #   [char | do_decode(rest, tree)]
-    # end
-
-    # def decode([], _) do {46,[]} end
-    # def decode([h|encoded], {:nodes, char, left, right}) do
-    #   case h do
-    #     ?- ->   decode(encoded, left)
-    #     ?. ->   decode(encoded, right)
-    #     32 ->   {char, encoded}
-    #   end
-    # end
-
-
-
     def basers do '.- .-.. .-.. ..-- -.-- --- ..- .-. ..-- -... .- ... . ..-- .- .-. . ..-- -... . .-.. --- -. --. ..-- - --- ..-- ..- ... ' end
     def rolled do
       '.... - - .--. ... ---... .----- .----- .-- .-- .-- .-.-.- -.-- --- ..- - ..- -... . .-.-.- -.-. --- -- .----- .-- .- - -.-. .... ..--.. ...- .----. -.. .--.-- ..... .---- .-- ....- .-- ----. .--.-- ..... --... --. .--.-- ..... ---.. -.-. .--.-- ..... .---- ' end
